@@ -66,9 +66,9 @@ public class BlueprintAPIController {
         }
     }
 
-    @RequestMapping(value="/prueba",method = RequestMethod.POST)
+    @RequestMapping(value="/crear-blueprint",method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> manejadorPostRecursoXX(@RequestBody Blueprint bp){
+    public ResponseEntity<?> manejadorPostBlueprint(@RequestBody Blueprint bp){
         try {
             services.addNewBlueprint(bp);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -79,7 +79,24 @@ public class BlueprintAPIController {
 
     }
 
+    @RequestMapping(value="/{author}/{name}",method = RequestMethod.PUT)
+    @ResponseBody
+    public ResponseEntity<?> manejadorPutBlueprint(@PathVariable("author") String author,@PathVariable("name") String name,@RequestBody Blueprint bp ) {
+        try {
+            Blueprint bp1=services.getBlueprint(author, name);
+            bp1.setPoints(bp.getPoints());
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            Logger.getLogger(BlueprintAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        }
+    }
 
 
-}
+
+
+
+
+
+    }
 
