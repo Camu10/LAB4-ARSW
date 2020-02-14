@@ -13,6 +13,7 @@ import edu.eci.arsw.blueprints.persistence.BlueprintsPersistence;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -21,7 +22,7 @@ import java.util.*;
 @Service("InMemoryBlueprintPersistence")
 public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
 
-    private final Map<Tuple<String,String>,Blueprint> blueprints=new HashMap<>();
+    private final ConcurrentHashMap<Tuple<String,String>,Blueprint> blueprints=new ConcurrentHashMap<>();
 
     public InMemoryBlueprintPersistence() {
         //load stub data
@@ -43,17 +44,21 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
     
     @Override
     public void saveBlueprint(Blueprint bp) throws BlueprintPersistenceException {
-        if (blueprints.containsKey(new Tuple<>(bp.getAuthor(),bp.getName()))){
+        Blueprint blueprint= blueprints.putIfAbsent(new Tuple<>(bp.getAuthor(),bp.getName()), bp);
+        if (blueprint!=null){
             throw new BlueprintPersistenceException("The given blueprint already exists: "+bp);
-        }
-        else{
-            blueprints.put(new Tuple<>(bp.getAuthor(),bp.getName()), bp);
         }
     }
 
     @Override
     public  HashSet<Blueprint> getAllBlueprints(){
         return new HashSet<Blueprint>(blueprints.values());
+    }
+
+    @Override
+    public void updateBlueprint(Blueprint bp,String author,String name) throws BlueprintNotFoundException {
+        Blueprint oldbp=getBlueprint(author,name);
+        oldbp.setPoints(bp.getPoints());
     }
 
     @Override
@@ -68,10 +73,9 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
     @Override
     public Set<Blueprint> getBlueprintsByAuthor(String author) throws BlueprintNotFoundException{
         Set<Blueprint> ans = new HashSet<>();
-        Set<Tuple<String,String>> llaves = blueprints.keySet();
-        for(Tuple<String,String> i : llaves){
-            if(i.getElem1().equals(author)){
-                ans.add(blueprints.get(i));
+        for(Map.Entry<Tuple<String, String>, Blueprint> i :blueprints.entrySet()){
+            if(i.getKey().o1.equals(author)){
+                ans.add(i.getValue());
             }
         }
         if(ans.size()==0) throw new BlueprintNotFoundException("Este usuario no tiene planos");

@@ -83,8 +83,7 @@ public class BlueprintAPIController {
     @ResponseBody
     public ResponseEntity<?> manejadorPutBlueprint(@PathVariable("author") String author,@PathVariable("name") String name,@RequestBody Blueprint bp ) {
         try {
-            Blueprint bp1=services.getBlueprint(author, name);
-            bp1.setPoints(bp.getPoints());
+            services.updateBlueprint(bp,author,name);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             Logger.getLogger(BlueprintAPIController.class.getName()).log(Level.SEVERE, null, ex);
