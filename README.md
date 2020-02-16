@@ -6,4 +6,4 @@
 
 ## Compile and run instructions.
 + **Para compilar:** mvn compile
-+ **Para ejecutar la clase principal de Blueprint:** mvn spring-boot:run
++ **Para ejecutar:** mvn spring-boot:run
