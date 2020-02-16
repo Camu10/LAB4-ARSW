@@ -35,7 +35,6 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
         Blueprint bp3=new Blueprint("camilo","bp3",pts2);
 
 
-
         blueprints.put(new Tuple<>(bp.getAuthor(),bp.getName()), bp);
         blueprints.put(new Tuple<>(bp2.getAuthor(),bp2.getName()), bp2);
         blueprints.put(new Tuple<>(bp3.getAuthor(),bp3.getName()), bp3);
